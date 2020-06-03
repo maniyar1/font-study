@@ -1,0 +1,120 @@
+@font-face {
+    font-family: "FiraSans";
+    src: local('Fira Sans Regular'), local('FiraSans-Regular'),
+         url("/fonts/fira/FiraSans-Regular.ttf") format('truetype');
+    font-weight: normal;
+    font-display: swap;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: "FiraSans";
+    src: local('Fira Sans Bold'), local('FiraSans-Bold'),
+         url("/fonts/fira/FiraSans-Bold.ttf") format('truetype');
+    font-weight: bold;
+    font-display: swap;
+    text-rendering: optimizeLegibility;
+}
+
+@font-face {
+    font-family: "FiraSans";
+    src: local'Fira Sans Italic'), local('FiraSans-Italic'), 
+         url("/fonts/fira/FiraSans-Italic.ttf") format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+    text-rendering: optimizeLegibility;
+}
+
+{{range .Options}}
+@font-face {
+    font-family: "{{.Font.Family}}";
+    src: local('{{.Font.Family}} Regular'), local('{{.Font.Family}}-Regular'),
+         url("{{.Font.Files.Regular}}") format('truetype');
+    font-weight: normal;
+    font-display: swap;
+    text-rendering: optimizeLegibility;
+}
+
+#font-{{.Number}} {
+    font-family: "{{.Font.Family}}";
+}
+{{end}}
+
+
+:root {
+  --max-width: 33em;
+}
+
+h1 {
+    font-size: 2em;
+    font-variant: small-caps;
+    text-align: center;
+    font-weight: normal; }
+
+h2 {   
+    font-variant: small-caps;
+    font-size: 1.4em;
+    font-weight: normal;
+}
+
+h3 {
+    font-variant: small-caps;
+    font-style: italic;
+    font-weight:normal;
+}
+
+body,html {
+	padding: 0;
+	margin: 0;
+	background-color: var(--back-color);
+}
+
+main {
+    font-family: "FiraSans", sans-serif;
+    font-size: 17px;
+    margin: 0 auto;
+    padding: 0 8.5em 0 8.5em;
+    max-width: var(--max-width);
+    min-height: 100vh;
+    color: var(--text-color);
+    background-color: white;
+}
+
+p {
+    font-weight: normal;
+	line-height: 1.4em;
+	margin-top: 0.5em;
+	display: block;
+}
+
+pre {
+    font-size: 10pt;
+    overflow-y: hidden;
+    background-color: var(--code-color);
+}
+
+footer {
+    text-align: right;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+
+.accent {
+	color: var(--accent-color);
+}
+
+@media (max-width: 600px) {
+  main {
+    font-size: 14px;
+    max-width: 33em;
+    padding: 0.65em;
+  }
+  :root {
+  	--back-color: white;
+  }
+}

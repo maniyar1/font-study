@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="normal.css">
+        <link rel=icon href=/favicon.png>
+        <meta charset="UTF-8">
+        <title>Mani KS Portfolio</title>
+        <style> {{.CSS}} </style>
+    </head>
+    <body>
+        <main>
+            <form>
+                {{range .Options}}
+                    <p id="font-{{.Number}}"> {{.Pangram}}
+                    <select id="font-{{.Number}}"> 
+                        <option value="1">1st</option>
+                        <option value="2">2nd</option>
+                        <option value="3">3rd</option>
+                        <option value="4">4th</option>
+                        <option value="5">5th</option>
+                        <option value="6">6th</option>
+                    </select>
+                    </p>
+                {{end}}
+            </form>
+            <!--#include file="/footer.html" -->
+        </main>
+    </body>
+</html>
