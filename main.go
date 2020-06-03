@@ -45,6 +45,7 @@ type PageData struct {
 
 func main() {
 	http.HandleFunc("/index", index)
+	http.HandleFunc("/", index)
 	http.ListenAndServe(":8090", nil)
 }
 
