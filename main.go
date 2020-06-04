@@ -1,52 +1,67 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"io"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
-	"text/template"
+	"strconv"
+	"strings"
 	"time"
 )
 
-// JSON Structs
-type JSONFormat struct {
-	Items []Font
-}
-
-type Font struct {
-	Kind         string
-	Family       string
-	Category     string
-	Variants     []string
-	Subsets      []string
-	Version      string
-	LastModified string
-	Files        Files
-}
-
-type Files struct {
-	Regular string
-}
-
-// Option is for HTML/CSS
-type Option struct {
-	Number  int
-	Pangram string
-	Font    Font
-}
-
-type PageData struct {
-	CSS     string
-	Options []Option
-}
-
 func main() {
+	openDB()
+	defer closeDB()
 	http.HandleFunc("/index", index)
 	http.HandleFunc("/", index)
+	http.HandleFunc("/thanks", thanks)
+	http.HandleFunc("/data.json", returnJSON)
 	http.ListenAndServe(":8090", nil)
+}
+
+func thanks(respWriter http.ResponseWriter, req *http.Request) {
+	req.ParseForm()
+
+	for key, val := range req.Form {
+		fontRatings := getValueOrBlank(key)
+		vString := strings.Join(val, "")
+		var points uint
+		val, _ := strconv.Atoi(vString)
+		switch val {
+		case 1:
+			fontRatings.FirstPlaceOccurances++
+			points = 80
+		case 2:
+			fontRatings.SecondPlaceOccurances++
+			points = 40
+		case 3:
+			fontRatings.ThirdPlaceOccurances++
+			points = 20
+		case 4:
+			fontRatings.FourthPlaceOccurances++
+			points = 10
+		case 5:
+			fontRatings.FifthPlaceOccurances++
+			points = 5
+		case 6:
+			fontRatings.SixthPlaceOccurances++
+			points = 0
+		}
+		fontRatings.TotalEntries++
+		fontRatings.Points += points
+		byteJSON, err := json.Marshal(fontRatings)
+		check(err)
+		db.Put([]byte(key), byteJSON, nil)
+		fmt.Println(string(byteJSON))
+	}
+	fmt.Fprintf(respWriter, "Thanks!\n")
+}
+
+func returnJSON(respWriter http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(respWriter, getEntireDatabaseAsJSON())
 }
 
 func index(respWriter http.ResponseWriter, req *http.Request) {
@@ -59,7 +74,7 @@ func index(respWriter http.ResponseWriter, req *http.Request) {
 func createOptions(pangram string) []Option {
 	rand.Seed(time.Now().UnixNano())
 	fonts := getJson()
-	rand := rand.Perm(50)
+	rand := rand.Perm(6)
 	var sixOptions [6]Option
 	for i, r := range rand[:6] {
 		sixOptions[i] = Option{Number: i, Pangram: pangram, Font: fonts[r]}
@@ -87,20 +102,9 @@ func getJson() []Font {
 	return jsonResult.Items
 }
 
-func runHTMLTemplate(fileName string, data PageData, writer io.Writer) {
-	tmpl := template.Must(template.ParseFiles(fileName))
-	tmpl.Execute(writer, data)
-}
-
-func runCSSTemplate(fileName string, data *PageData) {
-	tmpl := template.Must(template.ParseFiles(fileName))
-	var buf bytes.Buffer
-	check(tmpl.Execute(&buf, *data))
-	data.CSS = buf.String()
-}
-
 func check(e error) {
 	if e != nil {
+		log.Fatal(e)
 		panic(e)
 	}
 }

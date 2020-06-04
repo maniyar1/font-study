@@ -10,10 +10,14 @@
     </head>
     <body>
         <main>
-            <form>
+            <h1> Font Study </h1>
+            <h2> instructions </h2>
+            <p> Please pick which font you think is the easiest to read. </p>
+            <h2> form </h2>
+            <form action="/thanks" method="post">
                 {{range .Options}}
                     <p id="font-{{.Number}}"> {{.Pangram}}
-                    <select id="font-{{.Number}}"> 
+                    <select id="font-{{.Number}}" name="{{.Font.Family}}"> 
                         <option value="1">1st</option>
                         <option value="2">2nd</option>
                         <option value="3">3rd</option>
@@ -23,6 +27,7 @@
                     </select>
                     </p>
                 {{end}}
+                  <input type="submit" value="Submit">
             </form>
             <!--#include file="/footer.html" -->
         </main>
