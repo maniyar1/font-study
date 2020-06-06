@@ -32,8 +32,8 @@ func main() {
 	http.HandleFunc("/graph.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/graph.js")
 	})
-	log.Println("Listening on :8080...")
-	http.ListenAndServe(":8080", nil)
+	log.Println("Listening on :28892...")
+	http.ListenAndServe(":28892", nil)
 }
 
 func thanks(respWriter http.ResponseWriter, req *http.Request) {
