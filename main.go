@@ -65,11 +65,11 @@ func thanks(respWriter http.ResponseWriter, req *http.Request) {
 		db.Put([]byte(key), byteJSON, nil)
 		fmt.Println(string(byteJSON))
 	}
-	respWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 	fmt.Fprintf(respWriter, "Thanks!\n")
 }
 
 func returnJSON(respWriter http.ResponseWriter, req *http.Request) {
+	respWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 	fmt.Fprintf(respWriter, getEntireDatabaseAsJSON())
 }
 
