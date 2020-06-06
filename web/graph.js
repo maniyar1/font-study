@@ -2,13 +2,26 @@ fetch('/data.json')
   .then(response => response.json())
   .then(data => chart(data));
 
+let highPoints = 70
+let middlePoints = 50
+let lowPoints = 20
 function chart(json) {
     let labels = [];
     let data = [];
+    let colors = [];
 
     json.forEach(function (item, index) {
         labels.push(item.Family)
         data.push(item.AveragePoints)
+        if (item.AveragePoints > highPoints) {
+            colors.push('rgba(255, 99, 132, 0.5)')
+        } else if (item.AveragePoints > middlePoints) {
+            colors.push('rgba(255, 159, 64, 0.4)')
+        } else if (item.AveragePoints > lowPoints) {
+            colors.push('rgba(75, 192, 192, 0.5)')
+        } else {
+            colors.push('rgba(0, 0, 0, 0.2)')
+        }
     });
     console.log(labels)
     var ctx = document.getElementById('myChart').getContext('2d');
@@ -17,24 +30,9 @@ function chart(json) {
         data: {
             labels,
             datasets: [{
-                label: 'Fonts',
+                label: 'Average Points',
                 data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                backgroundColor: colors,
                 borderWidth: 1
             }]
         },
