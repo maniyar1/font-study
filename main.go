@@ -22,11 +22,18 @@ func main() {
 	openDB()
 	defer closeDB()
 	http.HandleFunc("/index", index)
-	http.HandleFunc("/", index)
+	//http.HandleFunc("/", index)
 	http.HandleFunc("/thanks", thanks)
 	http.HandleFunc("/data.json", returnJSON)
 	http.HandleFunc("/graph.svg", returnGraph)
-	http.ListenAndServe(":8090", nil)
+	http.HandleFunc("/graph.html", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/graph.html")
+	})
+	http.HandleFunc("/graph.js", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/graph.js")
+	})
+	log.Println("Listening on :8080...")
+	http.ListenAndServe(":8080", nil)
 }
 
 func thanks(respWriter http.ResponseWriter, req *http.Request) {
@@ -81,8 +88,8 @@ func returnGraph(respWriter http.ResponseWriter, req *http.Request) {
 func index(respWriter http.ResponseWriter, req *http.Request) {
 	pangram := "Pack my box with five dozen liquor jugs."
 	data := PageData{Options: createOptions(pangram)}
-	runCSSTemplate("template.css", &data)
-	runHTMLTemplate("template.html", data, respWriter)
+	runCSSTemplate("web/template.css", &data)
+	runHTMLTemplate("web/template.html", data, respWriter)
 }
 
 func createOptions(pangram string) []Option {
