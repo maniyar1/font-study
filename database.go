@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/syndtr/goleveldb/leveldb"
+	"sort"
 	"strings"
 )
 
@@ -44,14 +45,21 @@ func getValueAsStruct(key string) (FontRatings, error) {
 }
 
 func getEntireDatabaseAsJSON() string {
-	var jsonFile FontRatingsArray
+	finalJSON, _ := json.MarshalIndent(getEntireDatabaseAsSlice(), "", "\t")
+	return string(finalJSON)
+}
+
+func getEntireDatabaseAsSlice() []FontRatings {
+	var slice []FontRatings
 	iter := db.NewIterator(nil, nil)
 	for iter.Next() {
 		value := iter.Value()
 		var structValue FontRatings
 		json.Unmarshal(value, &structValue)
-		jsonFile = append(jsonFile, structValue)
+		slice = append(slice, structValue)
 	}
-	finalJSON, _ := json.MarshalIndent(jsonFile, "", "\t")
-	return string(finalJSON)
+	sort.Slice(slice, func(i, j int) bool {
+		return slice[i].AveragePoints > slice[j].AveragePoints
+	})
+	return slice
 }

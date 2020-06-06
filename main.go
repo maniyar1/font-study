@@ -12,6 +12,12 @@ import (
 	"time"
 )
 
+type Config struct {
+	NumberOfFonts uint
+}
+
+var config Config = Config{NumberOfFonts: 20}
+
 func main() {
 	openDB()
 	defer closeDB()
@@ -19,6 +25,7 @@ func main() {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/thanks", thanks)
 	http.HandleFunc("/data.json", returnJSON)
+	http.HandleFunc("/graph.svg", returnGraph)
 	http.ListenAndServe(":8090", nil)
 }
 
@@ -52,16 +59,23 @@ func thanks(respWriter http.ResponseWriter, req *http.Request) {
 		}
 		fontRatings.TotalEntries++
 		fontRatings.Points += points
+		fontRatings.AveragePoints = fontRatings.Points / fontRatings.TotalEntries
 		byteJSON, err := json.Marshal(fontRatings)
 		check(err)
 		db.Put([]byte(key), byteJSON, nil)
 		fmt.Println(string(byteJSON))
 	}
+	respWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 	fmt.Fprintf(respWriter, "Thanks!\n")
 }
 
 func returnJSON(respWriter http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(respWriter, getEntireDatabaseAsJSON())
+}
+
+func returnGraph(respWriter http.ResponseWriter, req *http.Request) {
+	respWriter.Header().Set("Content-Type", "image/svg+xml; charset=utf-8")
+	graph(respWriter)
 }
 
 func index(respWriter http.ResponseWriter, req *http.Request) {
@@ -74,7 +88,7 @@ func index(respWriter http.ResponseWriter, req *http.Request) {
 func createOptions(pangram string) []Option {
 	rand.Seed(time.Now().UnixNano())
 	fonts := getJson()
-	rand := rand.Perm(6)
+	rand := rand.Perm(int(config.NumberOfFonts))
 	var sixOptions [6]Option
 	for i, r := range rand[:6] {
 		sixOptions[i] = Option{Number: i, Pangram: pangram, Font: fonts[r]}
