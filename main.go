@@ -22,7 +22,7 @@ func main() {
 	openDB()
 	defer closeDB()
 	http.HandleFunc("/index", index)
-	//http.HandleFunc("/", index)
+	http.HandleFunc("/", index)
 	http.HandleFunc("/thanks", thanks)
 	http.HandleFunc("/data.json", returnJSON)
 	http.HandleFunc("/graph.svg", returnGraph)
