@@ -126,7 +126,6 @@ func getJson() []Font {
 
 func check(e error) {
 	if e != nil {
-		log.Fatal(e)
-		panic(e)
+		log.Println(e)
 	}
 }
