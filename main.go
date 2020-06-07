@@ -47,19 +47,19 @@ func thanks(respWriter http.ResponseWriter, req *http.Request) {
 		switch val {
 		case 1:
 			fontRatings.FirstPlaceOccurances++
-			points = 80
+			points = 5
 		case 2:
 			fontRatings.SecondPlaceOccurances++
-			points = 40
+			points = 4
 		case 3:
 			fontRatings.ThirdPlaceOccurances++
-			points = 20
+			points = 3
 		case 4:
 			fontRatings.FourthPlaceOccurances++
-			points = 10
+			points = 2
 		case 5:
 			fontRatings.FifthPlaceOccurances++
-			points = 5
+			points = 1
 		case 6:
 			fontRatings.SixthPlaceOccurances++
 			points = 0
