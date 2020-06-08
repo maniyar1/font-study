@@ -2,13 +2,15 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
+	"github.com/valyala/fasthttp"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
-	"strings"
+	//	"strings"
 	"time"
 )
 
@@ -17,39 +19,61 @@ type Config struct {
 }
 
 var config Config = Config{NumberOfFonts: 20}
+var (
+	addr               = flag.String("addr", ":8080", "TCP address to listen to")
+	compress           = flag.Bool("compress", false, "Whether to enable transparent response compression")
+	dir                = flag.String("dir", "web/", "Directory to serve static files from")
+	generateIndexPages = flag.Bool("generateIndexPages", false, "Whether to generate directory index pages")
+	byteRange          = flag.Bool("byteRange", false, "Enables byte range requests if set to true")
+)
 
 func main() {
 	openDB()
 	defer closeDB()
-	http.HandleFunc("/index", index)
-	http.HandleFunc("/", index)
-	http.HandleFunc("/thanks", thanks)
-	http.HandleFunc("/data.json", returnJSON)
-	http.HandleFunc("/graph.svg", returnGraph)
-	http.HandleFunc("/graph.html", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/graph.html")
-	})
-	http.HandleFunc("/graph.js", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/graph.js")
-	})
-	http.HandleFunc("/dataValidator.js", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/dataValidator.js")
-	})
-	log.Println("Listening on :28892...")
-	log.Println("Listening on :28892...")
-	http.ListenAndServe(":28892", nil)
+	flag.Parse()
+	fs := &fasthttp.FS{
+		Root:               *dir,
+		IndexNames:         []string{"index.html"},
+		GenerateIndexPages: *generateIndexPages,
+		Compress:           *compress,
+		AcceptByteRange:    *byteRange,
+	}
+	fsHandler := fs.NewRequestHandler()
+
+	requestHandler := func(ctx *fasthttp.RequestCtx) {
+		switch string(ctx.Path()) {
+		case "/":
+			index(ctx)
+		case "/font-study":
+			index(ctx)
+		case "/thanks":
+			thanks(ctx)
+		case "/data.json":
+			returnJSON(ctx)
+		case "/graph.svg":
+			returnGraph(ctx)
+		default:
+			fsHandler(ctx)
+		}
+	}
+
+	if err := fasthttp.ListenAndServe(*addr, requestHandler); err != nil {
+		log.Fatalf("Error in ListenAndServe: %s", err)
+	}
 }
 
-func thanks(respWriter http.ResponseWriter, req *http.Request) {
-	req.ParseForm()
+func thanks(ctx *fasthttp.RequestCtx) {
 	responses := Responses{}
 
-	for key, val := range req.Form {
-		fontRatings := getValueOrBlank(key)
-		vString := strings.Join(val, "")
+	ctx.SetContentType("text/html; charset=utf-8")
+	form := ctx.PostArgs()
+	form.VisitAll(func(key, val []byte) {
+		fontRatings := getValueOrBlank(string(key))
 		var points uint
-		val, _ := strconv.Atoi(vString)
-		switch val {
+		value, _ := strconv.Atoi(string(val))
+		fmt.Println(value)
+
+		switch value {
 		case 1:
 			fontRatings.FirstPlaceOccurances++
 			points = 5
@@ -68,34 +92,37 @@ func thanks(respWriter http.ResponseWriter, req *http.Request) {
 		case 6:
 			fontRatings.SixthPlaceOccurances++
 			points = 0
+		default:
+			log.Println("Non-valid number")
 		}
 		fontRatings.TotalEntries++
-		fontRatings.Points += points
+		fontRatings.Points += uint64(points)
 		fontRatings.AveragePoints = float64(fontRatings.Points) / float64(fontRatings.TotalEntries)
-		responses.Responses = append(responses.Responses, Response{Family: key, UserPoints: points, AveragePoints: fontRatings.AveragePoints})
+		responses.Responses = append(responses.Responses, Response{Family: string(key), UserPoints: points, AveragePoints: fontRatings.AveragePoints})
 		byteJSON, err := json.Marshal(fontRatings)
 		check(err)
-		db.Put([]byte(key), byteJSON, nil)
+		db.Put(key, byteJSON, nil)
 		fmt.Println(string(byteJSON))
-	}
-	runResponseTemplate("web/thanks.html", responses, respWriter)
+	})
+	runResponseTemplate("web/thanks.html", responses, ctx)
 }
 
-func returnJSON(respWriter http.ResponseWriter, req *http.Request) {
-	respWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
-	fmt.Fprintf(respWriter, getEntireDatabaseAsJSON())
+func returnJSON(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("application/json; charset=utf-8")
+	fmt.Fprintf(ctx, getEntireDatabaseAsJSON())
 }
 
-func returnGraph(respWriter http.ResponseWriter, req *http.Request) {
-	respWriter.Header().Set("Content-Type", "image/svg+xml; charset=utf-8")
-	graph(respWriter)
+func returnGraph(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("image/svg+xml; charset=utf-8")
+	graph(ctx)
 }
 
-func index(respWriter http.ResponseWriter, req *http.Request) {
+func index(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("text/html; charset=utf-8")
 	pangram := "Pack my box with five dozen liquor jugs."
 	data := PageData{Options: createOptions(pangram)}
 	runCSSTemplate("web/template.css", &data)
-	runHTMLTemplate("web/template.html", data, respWriter)
+	runHTMLTemplate("web/template.html", data, ctx)
 }
 
 func createOptions(pangram string) []Option {

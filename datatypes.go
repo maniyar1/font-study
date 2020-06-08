@@ -35,9 +35,9 @@ type PageData struct {
 // For storing in leveldb
 type FontRatings struct {
 	Family                string
-	Points                uint
+	Points                uint64
 	AveragePoints         float64
-	TotalEntries          uint
+	TotalEntries          uint64
 	FirstPlaceOccurances  uint
 	SecondPlaceOccurances uint
 	ThirdPlaceOccurances  uint
