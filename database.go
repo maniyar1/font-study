@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/syndtr/goleveldb/leveldb"
 	"sort"
 	"strings"
+
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 var db *leveldb.DB

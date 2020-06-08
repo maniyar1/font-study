@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta name="viewport" content="width=device-width">
+        <script src="/dataValidator.js"></script>
         <link rel="stylesheet" href="normal.css">
         <link rel=icon href=/favicon.png>
         <meta charset="UTF-8">
@@ -18,9 +19,9 @@
             To view the raw data for all submitted data, check out: <a href="/data.json"> this link.</a> <br>
             </p>
             <h2> form </h2>
-            <form action="/thanks" method="post">
+            <form name="rate-font" action="/thanks" method="post" onsubmit="return validateForm()">
                 {{range .Options}}
-                    <p id="font-{{.Number}}"> {{.Pangram}}
+                    <p id="p-font-{{.Number}}"> {{.Pangram}}
                     <select id="font-{{.Number}}" name="{{.Font.Family}}"> 
                         <option value="1">1st</option>
                         <option value="2">2nd</option>

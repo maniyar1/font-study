@@ -32,12 +32,17 @@ func main() {
 	http.HandleFunc("/graph.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "web/graph.js")
 	})
+	http.HandleFunc("/dataValidator.js", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "web/dataValidator.js")
+	})
+	log.Println("Listening on :28892...")
 	log.Println("Listening on :28892...")
 	http.ListenAndServe(":28892", nil)
 }
 
 func thanks(respWriter http.ResponseWriter, req *http.Request) {
 	req.ParseForm()
+	responses := Responses{}
 
 	for key, val := range req.Form {
 		fontRatings := getValueOrBlank(key)
@@ -67,12 +72,13 @@ func thanks(respWriter http.ResponseWriter, req *http.Request) {
 		fontRatings.TotalEntries++
 		fontRatings.Points += points
 		fontRatings.AveragePoints = fontRatings.Points / fontRatings.TotalEntries
+		responses.Responses = append(responses.Responses, Response{Family: key, UserPoints: points, AveragePoints: fontRatings.AveragePoints})
 		byteJSON, err := json.Marshal(fontRatings)
 		check(err)
 		db.Put([]byte(key), byteJSON, nil)
 		fmt.Println(string(byteJSON))
 	}
-	fmt.Fprintf(respWriter, "Thanks!\n")
+	runResponseTemplate("web/thanks.html", responses, respWriter)
 }
 
 func returnJSON(respWriter http.ResponseWriter, req *http.Request) {

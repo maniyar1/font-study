@@ -17,3 +17,8 @@ func runCSSTemplate(fileName string, data *PageData) {
 	check(tmpl.Execute(&buf, *data))
 	data.CSS = buf.String()
 }
+
+func runResponseTemplate(fileName string, data Responses, writer io.Writer) {
+	tmpl := template.Must(template.ParseFiles(fileName))
+	check(tmpl.Execute(writer, data))
+}

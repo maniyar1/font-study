@@ -48,3 +48,13 @@ type FontRatings struct {
 
 //for full JSON
 type FontRatingsArray []FontRatings
+
+// For thanks page
+type Responses struct {
+	Responses []Response
+}
+type Response struct {
+	Family        string
+	UserPoints    uint
+	AveragePoints uint
+}

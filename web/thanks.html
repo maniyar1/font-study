@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <script src="/dataValidator.js"></script>
+        <link rel="stylesheet" href="css/normal.css">
+        <link rel="stylesheet" href="css/normal.css">
+        <link rel=icon href=/favicon.png>
+        <meta charset="UTF-8">
+        <title>Mani KS Portfolio</title>
+    </head>
+    <body>
+        <main>
+             <table style="width:100%">
+                <tr> 
+                    <th>Font Name</th>
+                    <th>Your Score</th>
+                    <th>Average Score</th>
+                </tr>
+                {{range .Responses}}
+                    <tr> 
+                        <th>{{.Family}}</th>
+                        <th>{{.UserPoints}}</th>
+                        <th>{{.AveragePoints}}</th>
+                    </tr>
+                {{end}}
+            </table>
+            <footer> <a href="/font-study"> Return to form </a></footer>
+        </main>
+    </body>
+</html>

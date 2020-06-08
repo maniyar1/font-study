@@ -36,7 +36,7 @@
     text-rendering: optimizeLegibility;
 }
 
-#font-{{.Number}} {
+#p-font-{{.Number}} {
     font-family: "{{.Font.Family}}";
 }
 {{end}}
