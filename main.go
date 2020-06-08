@@ -104,9 +104,10 @@ func createOptions(pangram string) []Option {
 	rand := rand.Perm(int(config.NumberOfFonts))
 	var sixOptions [6]Option
 	for i, r := range rand[:6] {
-		if len(fonts[r].Files.Regular[:]) != 0 {
-			fonts[r].Files.Regular = fonts[r].Files.Regular[:4] + "s" + fonts[r].Files.Regular[4:]
+		for len(fonts[r].Files.Regular[:]) == 0 || fonts[r].Files.Regular[len(fonts[r].Files.Regular)-3:] != "ttf" {
+			r += 6
 		}
+		fonts[r].Files.Regular = fonts[r].Files.Regular[:4] + "s" + fonts[r].Files.Regular[4:]
 		sixOptions[i] = Option{Number: i, Pangram: pangram, Font: fonts[r]}
 	}
 	return sixOptions[:]
