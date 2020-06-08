@@ -33,7 +33,7 @@ function chart(json) {
                 label: 'Average Points',
                 data,
                 backgroundColor: colors,
-                borderWidth: 1
+                borderWidth: 2
             }]
         },
         options: {
@@ -43,7 +43,9 @@ function chart(json) {
                         beginAtZero: true
                     }
                 }]
-            }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
         }
     });
 }
