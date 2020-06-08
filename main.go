@@ -71,7 +71,7 @@ func thanks(respWriter http.ResponseWriter, req *http.Request) {
 		}
 		fontRatings.TotalEntries++
 		fontRatings.Points += points
-		fontRatings.AveragePoints = fontRatings.Points / fontRatings.TotalEntries
+		fontRatings.AveragePoints = float64(fontRatings.Points) / float64(fontRatings.TotalEntries)
 		responses.Responses = append(responses.Responses, Response{Family: key, UserPoints: points, AveragePoints: fontRatings.AveragePoints})
 		byteJSON, err := json.Marshal(fontRatings)
 		check(err)
@@ -100,7 +100,7 @@ func index(respWriter http.ResponseWriter, req *http.Request) {
 
 func createOptions(pangram string) []Option {
 	rand.Seed(time.Now().UnixNano())
-	fonts := getJson()
+	fonts := getJSON()
 	rand := rand.Perm(int(config.NumberOfFonts))
 	var sixOptions [6]Option
 	for i, r := range rand[:6] {
@@ -113,7 +113,7 @@ func createOptions(pangram string) []Option {
 	return sixOptions[:]
 }
 
-func getJson() []Font {
+func getJSON() []Font {
 	client := http.Client{
 		Timeout: time.Second * 2, // Maximum of 2 secs
 	}

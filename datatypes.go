@@ -36,7 +36,7 @@ type PageData struct {
 type FontRatings struct {
 	Family                string
 	Points                uint
-	AveragePoints         uint
+	AveragePoints         float64
 	TotalEntries          uint
 	FirstPlaceOccurances  uint
 	SecondPlaceOccurances uint
@@ -56,5 +56,5 @@ type Responses struct {
 type Response struct {
 	Family        string
 	UserPoints    uint
-	AveragePoints uint
+	AveragePoints float64
 }
