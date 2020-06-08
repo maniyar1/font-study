@@ -20,7 +20,7 @@ type Config struct {
 
 var config Config = Config{NumberOfFonts: 20}
 var (
-	addr               = flag.String("addr", ":8080", "TCP address to listen to")
+	addr               = flag.String("addr", ":28892", "TCP address to listen to")
 	compress           = flag.Bool("compress", false, "Whether to enable transparent response compression")
 	dir                = flag.String("dir", "web/", "Directory to serve static files from")
 	generateIndexPages = flag.Bool("generateIndexPages", false, "Whether to generate directory index pages")
