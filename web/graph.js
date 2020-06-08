@@ -2,9 +2,9 @@ fetch('/data.json')
   .then(response => response.json())
   .then(data => chart(data));
 
-let highPoints = 70
-let middlePoints = 50
-let lowPoints = 20
+let highPoints = 4
+let middlePoints = 3
+let lowPoints = 2
 function chart(json) {
     let labels = [];
     let data = [];
