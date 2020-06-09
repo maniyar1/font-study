@@ -119,8 +119,8 @@ func returnGraph(ctx *fasthttp.RequestCtx) {
 
 func index(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("text/html; charset=utf-8")
-	pangram := "Pack my box with five dozen liquor jugs."
-	data := PageData{Options: createOptions(pangram)}
+	paragraph := "If you know the enemy and know yourself, you need not fear the result of a hundred battles. If you know yourself but not the enemy, for every victory gained you will also suffer a defeat. If you know neither the enemy nor yourself, you will succumb in every battle. <br>"
+	data := PageData{Options: createOptions(paragraph)}
 	runCSSTemplate("web/template.css", &data)
 	runHTMLTemplate("web/template.html", data, ctx)
 }
